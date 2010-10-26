@@ -28,6 +28,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <mavenVersion>2.0</mavenVersion>
+    <java.target.version>1.6</java.target.version>
   </properties>
 
   <reporting>
