@@ -41,25 +41,41 @@ public class GenerateSchema extends AbstractDatamodelMojo {
      * Validate input files
      * @parameter expression="true";
      */
-    private boolean validate;
+    private boolean validate = true;
 
     public void execute() throws MojoExecutionException {
         File f = outputDirectory;
 
         if (!f.exists()) {
-            f.mkdirs();
+            if (!f.mkdirs())
+                throw new MojoExecutionException("Could not create directory" + f.getAbsolutePath());
         }
         try {
             Document styleDoc = getStylesheet("datamodel2schema.xsl");
             File styleFile = writeStylesheet(styleDoc);
             TransformMojo transformMojo = getTransformMojo(styleFile);
             transformMojo.execute();
-            styleFile.delete();
+            if (!styleFile.delete())
+                throw new MojoExecutionException("Could not delete temporary file: " + styleFile.getAbsolutePath());
         } catch (Exception e) {
             if (e instanceof MojoExecutionException)
                 throw (MojoExecutionException) e;
             throw new MojoExecutionException("Error while executing plugin", e);
         }
+    }
+
+    /**
+     * @return the outputDirectory
+     */
+    protected final File getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    /**
+     * @param outputDirectory the outputDirectory to set
+     */
+    protected final void setOutputDirectory(File outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
     private TransformMojo getTransformMojo(File styleFile) throws NoSuchFieldException, IllegalAccessException {
@@ -70,7 +86,7 @@ public class GenerateSchema extends AbstractDatamodelMojo {
         transformationSet.setValidating(validate);
         FileMapper fm = new FileMapper() {
             public String getMappedFileName(String fileName) {
-                return "datamodel-" + fileName.substring(0, fileName.length()-4) + ".xsd";
+                return "datamodel-" + fileName.substring(0, fileName.length() - 4) + ".xsd";
             }
         };
         transformationSet.setFileMappers(new FileMapper[] { fm });

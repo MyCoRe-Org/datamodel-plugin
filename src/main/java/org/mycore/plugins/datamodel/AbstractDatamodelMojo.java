@@ -75,4 +75,32 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
         return basedir;
     }
 
+    /**
+     * @param dataModelDirectory the dataModelDirectory to set
+     */
+    protected final void setDataModelDirectory(File dataModelDirectory) {
+        this.dataModelDirectory = dataModelDirectory;
+    }
+
+    /**
+     * @param project the project to set
+     */
+    protected final void setProject(MavenProject project) {
+        this.project = project;
+    }
+
+    /**
+     * @param settings the settings to set
+     */
+    protected final void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
+    /**
+     * @param basedir the basedir to set
+     */
+    protected final void setBasedir(File basedir) {
+        this.basedir = basedir;
+    }
+
 }
