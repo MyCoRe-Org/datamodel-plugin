@@ -3,7 +3,7 @@
   xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0">
 
   <xsl:output method="xml" encoding="UTF-8" indent="yes" xalan:indent-amount="2" />
-  <xsl:include href="datamodel2ext.xsl"/>
+  <xsl:include href="datamodel2ext.xsl" />
 
   <xsl:template match="/">
     <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -54,7 +54,7 @@
             </xs:element>
           </xsl:for-each>
         </xs:all>
-        <xs:attribute ref="xml:lang" use="optional"/>
+        <xs:attribute ref="xml:lang" use="optional" />
       </xs:complexType>
     </xs:element>
   </xsl:template>
@@ -92,22 +92,36 @@
         </xs:sequence>
         <xs:attribute name="class" use="required" type="xs:NCName" fixed="{$class}" />
         <xsl:choose>
-          <xsl:when test="@notinherit='ignore' and @heritable='ignore'">
-            <xs:attribute name="notinherit" type="xs:boolean" />
-            <xs:attribute name="heritable" type="xs:boolean" />
-          </xsl:when>
           <xsl:when test="@notinherit='ignore'">
             <xs:attribute name="notinherit" type="xs:boolean" />
-            <xs:attribute name="heritable" type="xs:boolean" use="required" fixed="false" />
           </xsl:when>
+          <xsl:when test="@notinherit='true'">
+            <xs:attribute name="notinherit" type="xs:boolean" use="required" fixed="{@notinherit}" />
+          </xsl:when>
+          <xsl:when test="@notinherit='false'">
+            <xs:attribute name="notinherit" type="xs:boolean" fixed="{@notinherit}" />
+          </xsl:when>
+          <xsl:when test="not(@notinherit) and @heritable">
+            <xs:attribute name="notinherit" type="xs:boolean" fixed="false" />
+          </xsl:when>
+        </xsl:choose>
+        <xsl:choose>
           <xsl:when test="@heritable='ignore'">
-            <xs:attribute name="notinherit" type="xs:boolean" use="required" fixed="false" />
             <xs:attribute name="heritable" type="xs:boolean" />
           </xsl:when>
-          <xsl:otherwise>
-            <xs:attributeGroup ref="noInheritance" />
-          </xsl:otherwise>
+          <xsl:when test="@heritable='true'">
+            <xs:attribute name="heritable" type="xs:boolean" use="required" fixed="{@heritable}" />
+          </xsl:when>
+          <xsl:when test="@heritable='false'">
+            <xs:attribute name="heritable" type="xs:boolean" fixed="{@heritable}" />
+          </xsl:when>
+          <xsl:when test="not(@heritable) and @notinherit">
+            <xs:attribute name="heritable" type="xs:boolean" fixed="false" />
+          </xsl:when>
         </xsl:choose>
+        <xsl:if test="not(@notinherit) and not(@heritable)">
+          <xs:attributeGroup ref="noInheritance" />
+        </xsl:if>
       </xs:complexType>
     </xs:element>
   </xsl:template>
