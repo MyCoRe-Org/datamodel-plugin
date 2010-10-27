@@ -7,7 +7,6 @@
   <xsl:param name="objectType" />
   <xsl:param name="step" />
   <xsl:param name="titleuri" />
-  <xsl:param name="layin" />
   <xsl:param name="layout" />
   <xsl:variable name="titles" select="document($titleuri)/titles" />
 
@@ -40,12 +39,9 @@
   <xsl:template match="editor/@id|components/@root">
     <xsl:attribute name="{local-name()}">
 	   <xsl:choose>
-	     <xsl:when test="$layin">
-	       <xsl:value-of select="concat('edit-',$objectType,'-',$layin)" />
-	     </xsl:when>
-	     <!--<xsl:when test="$layout">
+	     <xsl:when test="$layout">
 	       <xsl:value-of select="concat('edit-',$objectType,'-',$layout)" />
-	     </xsl:when>-->
+	     </xsl:when>
 	     <xsl:otherwise>
 	       <xsl:value-of select="concat('edit-',$objectType)" />
 	     </xsl:otherwise>
@@ -56,9 +52,6 @@
   <xsl:template match="include/@uri">
     <xsl:attribute name="{local-name()}">
 	   <xsl:choose>
-	     <xsl:when test="$layin">
-	         <xsl:value-of select="concat('webapp:editor/editor-',$objectType,'-',$layin,'.xml')" />
-	     </xsl:when>     
 	     <xsl:when test="$layout">
 	       <xsl:value-of select="concat('webapp:editor/editor-',$objectType,'-',$layout,'.xml')" />
 	     </xsl:when> 
