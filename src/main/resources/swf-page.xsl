@@ -13,6 +13,9 @@
   <xsl:template name="getTitle">
     <xsl:param name="lang" />
     <xsl:choose>
+      <xsl:when test="$titles/title[@step=$step and @type=$objectType and @layout=$layout and lang($lang)]">
+        <xsl:value-of select="$titles/title[@step=$step and @type=$objectType and lang($lang)]" />
+      </xsl:when>
       <xsl:when test="$titles/title[@step=$step and @type=$objectType and lang($lang)]">
         <xsl:value-of select="$titles/title[@step=$step and @type=$objectType and lang($lang)]" />
       </xsl:when>
