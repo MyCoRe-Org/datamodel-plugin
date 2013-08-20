@@ -7,14 +7,14 @@
   </parent>
   <groupId>org.mycore.plugins</groupId>
   <artifactId>datamodel-plugin</artifactId>
-  <version>0.3</version>
+  <version>0.4-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>datamodel-plugin Maven Plugin</name>
 
   <scm>
-    <connection>scm:svn:http://server.mycore.de/svn/maven/datamodel-plugin/tags/datamodel-plugin-0.3</connection>
-    <developerConnection>scm:svn:https://server.mycore.de/svn/maven/datamodel-plugin/tags/datamodel-plugin-0.3</developerConnection>
-    <url>http://www.mycore.de/viewvc/viewvc.cgi/maven/datamodel-plugin/tags/datamodel-plugin-0.3</url>
+    <connection>scm:svn:http://server.mycore.de/svn/maven/datamodel-plugin/trunk</connection>
+    <developerConnection>scm:svn:https://server.mycore.de/svn/maven/datamodel-plugin/trunk</developerConnection>
+    <url>http://www.mycore.de/viewvc/viewvc.cgi/maven/datamodel-plugin/trunk</url>
   </scm>
   <distributionManagement>
     <site>
