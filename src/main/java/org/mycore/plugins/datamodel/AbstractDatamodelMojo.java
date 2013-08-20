@@ -131,12 +131,31 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
         this.basedir = basedir;
     }
 
-    protected TransformMojo getTransformMojo(String stylesheet, File outputDirectory, File inputFileOrDir,
-        FileMapper fm, Properties parameters) throws NoSuchFieldException, IllegalAccessException,
-        MojoExecutionException {
+    protected TransformMojo getTransformMojo(TransformationSet... transformationSet) throws IllegalArgumentException,
+        IllegalAccessException, MojoExecutionException, NoSuchFieldException, SecurityException {
         MavenProject currentProject = getProject();
         ResourceManager currentResourceManager = getResourceManager();
         File currentBaseDir = getBasedir();
+        TransformMojo transformMojo = new TransformMojo();
+        transformMojo.setLog(getLog());
+        Field transformationSetsField = TransformMojo.class.getDeclaredField("transformationSets");
+        transformationSetsField.setAccessible(true);
+        transformationSetsField.set(transformMojo, transformationSet);
+        Field projectField = AbstractXmlMojo.class.getDeclaredField("project");
+        projectField.setAccessible(true);
+        projectField.set(transformMojo, currentProject);
+        Field locatorField = AbstractXmlMojo.class.getDeclaredField("locator");
+        locatorField.setAccessible(true);
+        locatorField.set(transformMojo, currentResourceManager);
+        Field basedirField = AbstractXmlMojo.class.getDeclaredField("basedir");
+        basedirField.setAccessible(true);
+        basedirField.set(transformMojo, currentBaseDir);
+        return transformMojo;
+
+    }
+
+    protected TransformationSet getTransformationSet(String stylesheet, File outputDirectory, File inputFileOrDir,
+        FileMapper fm, Properties parameters) {
         TransformationSet transformationSet = new TransformationSet();
         if (inputFileOrDir.isFile()) {
             transformationSet.setDir(inputFileOrDir.getParentFile());
@@ -159,21 +178,7 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
             }
             transformationSet.setParameters(p);
         }
-        TransformMojo transformMojo = new TransformMojo();
-        transformMojo.setLog(getLog());
-        Field transformationSetsField = TransformMojo.class.getDeclaredField("transformationSets");
-        transformationSetsField.setAccessible(true);
-        transformationSetsField.set(transformMojo, new TransformationSet[] { transformationSet });
-        Field projectField = AbstractXmlMojo.class.getDeclaredField("project");
-        projectField.setAccessible(true);
-        projectField.set(transformMojo, currentProject);
-        Field locatorField = AbstractXmlMojo.class.getDeclaredField("locator");
-        locatorField.setAccessible(true);
-        locatorField.set(transformMojo, currentResourceManager);
-        Field basedirField = AbstractXmlMojo.class.getDeclaredField("basedir");
-        basedirField.setAccessible(true);
-        basedirField.set(transformMojo, currentBaseDir);
-        return transformMojo;
+        return transformationSet;
     }
 
     protected void prepareOutputDirectory(File f) throws MojoExecutionException {

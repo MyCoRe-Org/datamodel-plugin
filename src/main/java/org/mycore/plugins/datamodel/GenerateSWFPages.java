@@ -22,8 +22,36 @@ import org.codehaus.plexus.components.io.filemappers.FileMapper;
  * @author Thomas Scheffler (yagee)
  * 
  */
-@Mojo(name = "swf-pages", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+@Mojo(name = "swf-pages", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
 public class GenerateSWFPages extends AbstractDatamodelMojo {
+
+    private static final class EditorFormFileMapper implements FileMapper {
+        private final String objectType;
+
+        private final String layParam;
+
+        private final String step;
+
+        private EditorFormFileMapper(String objectType, String layParam, String step) {
+            this.objectType = objectType;
+            this.layParam = layParam;
+            this.step = step;
+        }
+
+        public String getMappedFileName(String fileName) {
+            StringBuilder finalName = new StringBuilder();
+            finalName.append("editor_form_");
+            finalName.append(step);
+            finalName.append("-");
+            finalName.append(objectType);
+            if (layParam != null) {
+                finalName.append("-");
+                finalName.append(layParam);
+            }
+            finalName.append(".xml");
+            return finalName.toString();
+        }
+    }
 
     /**
      * SWF steps
@@ -61,39 +89,29 @@ public class GenerateSWFPages extends AbstractDatamodelMojo {
         prepareOutputDirectory(getWebDirectory());
         try {
             List<String> objectTypes = getObjectTypes();
-            if (objectTypes.isEmpty())
-                throw new MojoExecutionException("Could not found any datamodel definitions in "
-                    + getDataModelDirectory().getAbsolutePath());
+            if (objectTypes.isEmpty()) {
+                String msg = "Could not found any datamodel definitions in "
+                    + getDataModelDirectory().getAbsolutePath();
+                throw new MojoExecutionException(msg);
+            }
             for (final String objectType : objectTypes) {
                 LayoutDefinition layout = getLayout(objectType);
                 for (final String step : steps) {
                     Properties parameters = getParameters(objectType, step);
-                    if (layout.getLayouts().length == 0)
-                        throw new MojoExecutionException("Could not get layout definition for object type "
-                            + objectType);
+                    if (layout.getLayouts().length == 0) {
+                        String msg = "Could not get layout definition for object type " + objectType;
+                        throw new MojoExecutionException(msg);
+                    }
                     for (final String layParam : layout.getLayouts()) {
-                        if (layParam != null)
+                        if (layParam != null) {
                             parameters.put("layout", layParam);
-                        getLog()
-                            .info(
-                                MessageFormat.format("objectType: {0}, step: {1}, layout: {2}", objectType, step,
-                                    layParam));
-                        TransformMojo transformMojo = getTransformMojo("swf-page.xsl", getWebDirectory(),
-                            getTemplate(), new FileMapper() {
-                                public String getMappedFileName(String fileName) {
-                                    StringBuilder finalName = new StringBuilder();
-                                    finalName.append("editor_form_");
-                                    finalName.append(step);
-                                    finalName.append("-");
-                                    finalName.append(objectType);
-                                    if (layParam != null) {
-                                        finalName.append("-");
-                                        finalName.append(layParam);
-                                    }
-                                    finalName.append(".xml");
-                                    return finalName.toString();
-                                }
-                            }, parameters);
+                        }
+                        String msg = MessageFormat.format("objectType: {0}, step: {1}, layout: {2}", objectType, step,
+                            layParam);
+                        getLog().info(msg);
+                        TransformMojo transformMojo = getTransformMojo(getTransformationSet("swf-page.xsl",
+                            getWebDirectory(), getTemplate(), new EditorFormFileMapper(objectType, layParam, step),
+                            parameters));
                         transformMojo.execute();
                     }
                 }

@@ -19,7 +19,7 @@ import org.codehaus.plexus.util.FileUtils;
  * Copies editor definitions from ${editorDirectory} to ${targetEditorDirectory}
  * @author Thomas Scheffler (yagee)
  */
-@Mojo(name = "copy-editor", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+@Mojo(name = "copy-editor", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
 public class CopyEditorForms extends AbstractDatamodelMojo {
 
     /**

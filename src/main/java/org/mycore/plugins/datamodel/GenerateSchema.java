@@ -13,8 +13,14 @@ import org.codehaus.plexus.components.io.filemappers.FileMapper;
  * Goal that generates XML Schema files from MyCoRe datamodel 2 files.
  * @author Thomas Scheffler (yagee)
  */
-@Mojo(name = "schema", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+@Mojo(name = "schema", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
 public class GenerateSchema extends AbstractDatamodelMojo {
+    private static final class SchemaFileMapper implements FileMapper {
+        public String getMappedFileName(String fileName) {
+            return "datamodel-" + fileName.substring(0, fileName.length() - 4) + ".xsd";
+        }
+    }
+
     /**
      * Location of the file.
      */
@@ -24,12 +30,8 @@ public class GenerateSchema extends AbstractDatamodelMojo {
     public void execute() throws MojoExecutionException {
         prepareOutputDirectory(getSchemaDirectory());
         try {
-            TransformMojo transformMojo = getTransformMojo("datamodel2schema.xsl", getSchemaDirectory(),
-                getDataModelDirectory(), new FileMapper() {
-                    public String getMappedFileName(String fileName) {
-                        return "datamodel-" + fileName.substring(0, fileName.length() - 4) + ".xsd";
-                    }
-                }, null);
+            TransformMojo transformMojo = getTransformMojo(getTransformationSet("datamodel2schema.xsl",
+                getSchemaDirectory(), getDataModelDirectory(), new SchemaFileMapper(), null));
             transformMojo.execute();
         } catch (Exception e) {
             if (e instanceof MojoExecutionException)
