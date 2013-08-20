@@ -17,10 +17,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.mojo.xml.TransformMojo;
 import org.codehaus.plexus.components.io.filemappers.FileMapper;
-import org.w3c.dom.Document;
 
 /**
- * @author Thomas Scheffler
+ * @author Thomas Scheffler (yagee)
  * 
  */
 @Mojo(name = "swf-pages", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
@@ -41,19 +40,19 @@ public class GenerateSWFPages extends AbstractDatamodelMojo {
     /**
      * Where to put generated webpages to.
      */
-    @Parameter(defaultValue="${project.build.outputDirectory}/META-INF/resources")
+    @Parameter(defaultValue = "${project.build.outputDirectory}/META-INF/resources")
     private File webDirectory;
 
     /**
      * Template with titles files.
      */
-    @Parameter(defaultValue="${basedir}/src/main/datamodel/swf/titles.xml")
+    @Parameter(defaultValue = "${basedir}/src/main/datamodel/swf/titles.xml")
     private File titles;
 
     /**
      * Template with titles files.
      */
-    @Parameter(defaultValue="${basedir}/src/main/datamodel/swf/template.xml")
+    @Parameter(defaultValue = "${basedir}/src/main/datamodel/swf/template.xml")
     private File template;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -61,45 +60,44 @@ public class GenerateSWFPages extends AbstractDatamodelMojo {
             throw new MojoExecutionException("There are no workflow steps defined.");
         prepareOutputDirectory(getWebDirectory());
         try {
-            Document styleDoc = getStylesheet("swf-page.xsl");
-            File styleFile = new File(getWebDirectory(), this.getClass().getCanonicalName() + ".xsl");
-            writeStylesheet(styleDoc, styleFile);
-
             List<String> objectTypes = getObjectTypes();
             if (objectTypes.isEmpty())
                 throw new MojoExecutionException("Could not found any datamodel definitions in "
-                        + getDataModelDirectory().getAbsolutePath());
+                    + getDataModelDirectory().getAbsolutePath());
             for (final String objectType : objectTypes) {
                 LayoutDefinition layout = getLayout(objectType);
                 for (final String step : steps) {
                     Properties parameters = getParameters(objectType, step);
                     if (layout.getLayouts().length == 0)
-                        throw new MojoExecutionException("Could not get layout definition for object type " + objectType);
+                        throw new MojoExecutionException("Could not get layout definition for object type "
+                            + objectType);
                     for (final String layParam : layout.getLayouts()) {
                         if (layParam != null)
                             parameters.put("layout", layParam);
-                        getLog().info(MessageFormat.format("objectType: {0}, step: {1}, layout: {2}", objectType, step, layParam));
-                        TransformMojo transformMojo = getTransformMojo(styleFile, getWebDirectory(), getTemplate(), new FileMapper() {
-                            public String getMappedFileName(String fileName) {
-                                StringBuilder finalName = new StringBuilder();
-                                finalName.append("editor_form_");
-                                finalName.append(step);
-                                finalName.append("-");
-                                finalName.append(objectType);
-                                if (layParam != null) {
+                        getLog()
+                            .info(
+                                MessageFormat.format("objectType: {0}, step: {1}, layout: {2}", objectType, step,
+                                    layParam));
+                        TransformMojo transformMojo = getTransformMojo("swf-page.xsl", getWebDirectory(),
+                            getTemplate(), new FileMapper() {
+                                public String getMappedFileName(String fileName) {
+                                    StringBuilder finalName = new StringBuilder();
+                                    finalName.append("editor_form_");
+                                    finalName.append(step);
                                     finalName.append("-");
-                                    finalName.append(layParam);
+                                    finalName.append(objectType);
+                                    if (layParam != null) {
+                                        finalName.append("-");
+                                        finalName.append(layParam);
+                                    }
+                                    finalName.append(".xml");
+                                    return finalName.toString();
                                 }
-                                finalName.append(".xml");
-                                return finalName.toString();
-                            }
-                        }, parameters);
+                            }, parameters);
                         transformMojo.execute();
                     }
                 }
             }
-            if (!styleFile.delete())
-                throw new MojoExecutionException("Could not delete temporary file: " + styleFile.getAbsolutePath());
         } catch (Exception e) {
             if (e instanceof MojoExecutionException)
                 throw (MojoExecutionException) e;

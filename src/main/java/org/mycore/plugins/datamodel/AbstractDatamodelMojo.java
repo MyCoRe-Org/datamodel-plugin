@@ -9,17 +9,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.mojo.xml.AbstractXmlMojo;
@@ -27,9 +20,7 @@ import org.codehaus.mojo.xml.TransformMojo;
 import org.codehaus.mojo.xml.transformer.NameValuePair;
 import org.codehaus.mojo.xml.transformer.TransformationSet;
 import org.codehaus.plexus.components.io.filemappers.FileMapper;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.resource.ResourceManager;
 
 /**
  * @author Thomas Scheffler (yagee)
@@ -46,6 +37,9 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
     @Parameter(readonly = true, required = true, defaultValue = "${project}")
     private MavenProject project;
 
+    @Component
+    private ResourceManager resourceManager;
+
     /**
      * The system settings for Maven. This is the instance resulting from 
      * merging global- and user-level settings files.
@@ -59,8 +53,6 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
      */
     @Parameter(readonly = true, required = true, defaultValue = "${basedir}")
     private File basedir;
-
-    private String XSL_URI = "http://www.w3.org/1999/XSL/Transform";
 
     /**
      * Validate input files
@@ -77,9 +69,20 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
 
     /**
      * @return the project
+     * @throws MojoExecutionException 
      */
-    protected final MavenProject getProject() {
+    protected final MavenProject getProject() throws MojoExecutionException {
+        if (project == null) {
+            throw new MojoExecutionException("\"project\" is not defined.");
+        }
         return project;
+    }
+
+    protected ResourceManager getResourceManager() throws MojoExecutionException {
+        if (resourceManager == null) {
+            throw new MojoExecutionException("ResourceManager component was not injected.");
+        }
+        return resourceManager;
     }
 
     /**
@@ -91,8 +94,12 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
 
     /**
      * @return the basedir
+     * @throws MojoExecutionException 
      */
-    protected final File getBasedir() {
+    protected final File getBasedir() throws MojoExecutionException {
+        if (basedir == null) {
+            throw new MojoExecutionException("\"basedir\" is not defined.");
+        }
         return basedir;
     }
 
@@ -124,8 +131,12 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
         this.basedir = basedir;
     }
 
-    protected TransformMojo getTransformMojo(File styleFile, File outputDirectory, File inputFileOrDir, FileMapper fm,
-        Properties parameters) throws NoSuchFieldException, IllegalAccessException {
+    protected TransformMojo getTransformMojo(String stylesheet, File outputDirectory, File inputFileOrDir,
+        FileMapper fm, Properties parameters) throws NoSuchFieldException, IllegalAccessException,
+        MojoExecutionException {
+        MavenProject currentProject = getProject();
+        ResourceManager currentResourceManager = getResourceManager();
+        File currentBaseDir = getBasedir();
         TransformationSet transformationSet = new TransformationSet();
         if (inputFileOrDir.isFile()) {
             transformationSet.setDir(inputFileOrDir.getParentFile());
@@ -134,7 +145,7 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
             transformationSet.setDir(inputFileOrDir);
         }
         transformationSet.setOutputDir(outputDirectory);
-        transformationSet.setStylesheet(styleFile.getAbsolutePath());
+        transformationSet.setStylesheet(stylesheet);
         transformationSet.setValidating(validate);
         transformationSet.setFileMappers(new FileMapper[] { fm });
         if (parameters != null) {
@@ -150,33 +161,19 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
         }
         TransformMojo transformMojo = new TransformMojo();
         transformMojo.setLog(getLog());
-        Field transformationSets = TransformMojo.class.getDeclaredField("transformationSets");
-        transformationSets.setAccessible(true);
-        transformationSets.set(transformMojo, new TransformationSet[] { transformationSet });
-        Field project = AbstractXmlMojo.class.getDeclaredField("project");
-        project.setAccessible(true);
-        project.set(transformMojo, getProject());
+        Field transformationSetsField = TransformMojo.class.getDeclaredField("transformationSets");
+        transformationSetsField.setAccessible(true);
+        transformationSetsField.set(transformMojo, new TransformationSet[] { transformationSet });
+        Field projectField = AbstractXmlMojo.class.getDeclaredField("project");
+        projectField.setAccessible(true);
+        projectField.set(transformMojo, currentProject);
+        Field locatorField = AbstractXmlMojo.class.getDeclaredField("locator");
+        locatorField.setAccessible(true);
+        locatorField.set(transformMojo, currentResourceManager);
+        Field basedirField = AbstractXmlMojo.class.getDeclaredField("basedir");
+        basedirField.setAccessible(true);
+        basedirField.set(transformMojo, currentBaseDir);
         return transformMojo;
-    }
-
-    protected void writeStylesheet(Document styleDoc, File styleFile) throws TransformerException {
-        DOMSource domSource = new DOMSource(styleDoc);
-        StreamResult streamResult = new StreamResult(styleFile);
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer serializer = tf.newTransformer();
-        serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-        serializer.transform(domSource, streamResult);
-    }
-
-    protected Document getStylesheet(String resourceFile) throws ParserConfigurationException {
-        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        Element root = doc.createElementNS(XSL_URI, "stylesheet");
-        doc.appendChild(root);
-        Element include = doc.createElementNS(XSL_URI, "include");
-        include.setAttribute("href", resourceFile);
-        root.appendChild(include);
-        return doc;
     }
 
     protected void prepareOutputDirectory(File f) throws MojoExecutionException {
