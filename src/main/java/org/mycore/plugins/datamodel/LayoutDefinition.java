@@ -28,7 +28,7 @@ public class LayoutDefinition {
     }
 
     /**
-     * @param layout the layout to set
+     * @param layouts the layouts to set
      */
     protected final void setLayouts(String[] layouts) {
         this.layouts = layouts;
