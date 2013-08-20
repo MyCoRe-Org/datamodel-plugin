@@ -12,6 +12,9 @@ import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.mojo.xml.TransformMojo;
 import org.codehaus.plexus.components.io.filemappers.FileMapper;
 import org.w3c.dom.Document;
@@ -19,39 +22,38 @@ import org.w3c.dom.Document;
 /**
  * @author Thomas Scheffler
  * 
- * @goal swf-pages
- * @phase generate-resources
  */
+@Mojo(name = "swf-pages", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class GenerateSWFPages extends AbstractDatamodelMojo {
 
     /**
      * SWF steps
-     * @parameter
      */
+    @Parameter
     private String[] steps = new String[] { "author", "commit" };
 
     /**
      * Layout definitions
-     * @parameter
      */
+    @Parameter
     private LayoutDefinition[] layoutDefinitions = new LayoutDefinition[0];
 
     /**
      * Where to put generated webpages to.
-     * @parameter expression="${project.build.outputDirectory}/web"
      */
+    @Parameter(defaultValue="${project.build.outputDirectory}/META-INF/resources")
     private File webDirectory;
 
     /**
      * Template with titles files.
-     * @parameter expression="${basedir}/src/main/datamodel/swf/titles.xml"
      */
+    @Parameter(defaultValue="${basedir}/src/main/datamodel/swf/titles.xml")
     private File titles;
 
     /**
      * Template with titles files.
-     * @parameter expression="${basedir}/src/main/datamodel/swf/template.xml"
      */
+    @Parameter(defaultValue="${basedir}/src/main/datamodel/swf/template.xml")
     private File template;
 
     public void execute() throws MojoExecutionException, MojoFailureException {

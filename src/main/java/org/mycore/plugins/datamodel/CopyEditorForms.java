@@ -9,27 +9,29 @@ import java.text.MessageFormat;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Copies editor definitions from ${editorDirectory} to ${targetEditorDirectory}
  * @author Thomas Scheffler (yagee)
- * @goal copy-editor
- * @phase generate-resources
  */
+@Mojo(name = "copy-editor", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class CopyEditorForms extends AbstractDatamodelMojo {
 
     /**
      * directory that contains editor definitions
-     * @parameter expression="${basedir}/src/main/datamodel/editor"
      */
+    @Parameter(defaultValue = "${basedir}/src/main/datamodel/editor")
     private File editorDirectory;
 
     /**
      * target directory for editor definitions
-     * @parameter expression="${project.build.outputDirectory}/web/editor"
      */
+    @Parameter(defaultValue = "${project.build.outputDirectory}/META-INF/resources/editor")
     private File targetEditorDirectory;
 
     /* (non-Javadoc)
@@ -52,14 +54,15 @@ public class CopyEditorForms extends AbstractDatamodelMojo {
             try {
                 if (copyFileIfNeeded(source, target)) {
                     if (getLog().isDebugEnabled())
-                        getLog().debug(MessageFormat.format("Copying {0} to {1}", source.getName(), target.getAbsolutePath()));
+                        getLog().debug(
+                            MessageFormat.format("Copying {0} to {1}", source.getName(), target.getAbsolutePath()));
                 } else {
                     if (getLog().isDebugEnabled())
                         getLog().debug(MessageFormat.format("Skipped copying {0}", source.getName()));
                 }
             } catch (IOException e) {
-                throw new MojoExecutionException(MessageFormat.format("Could not copy {0} to {1}!", source.getAbsolutePath(),
-                        target.getAbsolutePath()), e);
+                throw new MojoExecutionException(MessageFormat.format("Could not copy {0} to {1}!",
+                    source.getAbsolutePath(), target.getAbsolutePath()), e);
             }
         }
     }
@@ -67,7 +70,8 @@ public class CopyEditorForms extends AbstractDatamodelMojo {
     private boolean copyFileIfNeeded(File source, File target) throws IOException {
         if (getLog().isDebugEnabled()) {
             getLog().debug(
-                    MessageFormat.format("Source timestamp: {0} target timestamp: {1}", source.lastModified(), target.lastModified()));
+                MessageFormat.format("Source timestamp: {0} target timestamp: {1}", source.lastModified(),
+                    target.lastModified()));
         }
         if (target.lastModified() < source.lastModified() || target.length() != source.length()) {
             FileUtils.copyFile(source, target);

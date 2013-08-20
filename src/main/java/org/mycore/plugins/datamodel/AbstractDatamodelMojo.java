@@ -29,6 +29,7 @@ import org.codehaus.mojo.xml.transformer.TransformationSet;
 import org.codehaus.plexus.components.io.filemappers.FileMapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * @author Thomas Scheffler (yagee)
@@ -38,43 +39,33 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
 
     /**
      * Datamodel directory
-     * @parameter expression="${basedir}/src/main/datamodel/def"
      */
+    @Parameter(defaultValue = "${basedir}/src/main/datamodel/def")
     private File dataModelDirectory;
 
-    /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
+    @Parameter(readonly = true, required = true, defaultValue = "${project}")
     private MavenProject project;
 
     /**
      * The system settings for Maven. This is the instance resulting from 
      * merging global- and user-level settings files.
-     * 
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      */
+    @Parameter(readonly = true, required = true, defaultValue = "${settings}")
     private Settings settings;
 
     /**
      * The base directory, relative to which directory names are
      * interpreted.
-     *
-     * @parameter expression="${basedir}"
-     * @required
-     * @readonly
      */
+    @Parameter(readonly = true, required = true, defaultValue = "${basedir}")
     private File basedir;
 
     private String XSL_URI = "http://www.w3.org/1999/XSL/Transform";
 
     /**
      * Validate input files
-     * @parameter expression="true";
      */
+    @Parameter(defaultValue = "true")
     private boolean validate = true;
 
     /**
@@ -133,8 +124,8 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
         this.basedir = basedir;
     }
 
-    protected TransformMojo getTransformMojo(File styleFile, File outputDirectory, File inputFileOrDir, FileMapper fm, Properties parameters)
-            throws NoSuchFieldException, IllegalAccessException {
+    protected TransformMojo getTransformMojo(File styleFile, File outputDirectory, File inputFileOrDir, FileMapper fm,
+        Properties parameters) throws NoSuchFieldException, IllegalAccessException {
         TransformationSet transformationSet = new TransformationSet();
         if (inputFileOrDir.isFile()) {
             transformationSet.setDir(inputFileOrDir.getParentFile());
@@ -143,7 +134,7 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
             transformationSet.setDir(inputFileOrDir);
         }
         transformationSet.setOutputDir(outputDirectory);
-        transformationSet.setStylesheet(styleFile);
+        transformationSet.setStylesheet(styleFile.getAbsolutePath());
         transformationSet.setValidating(validate);
         transformationSet.setFileMappers(new FileMapper[] { fm });
         if (parameters != null) {

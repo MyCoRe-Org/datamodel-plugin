@@ -2,25 +2,24 @@ package org.mycore.plugins.datamodel;
 
 import java.io.File;
 
-
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.mojo.xml.TransformMojo;
 import org.codehaus.plexus.components.io.filemappers.FileMapper;
 import org.w3c.dom.Document;
 
 /**
  * Goal that generates XML Schema files from MyCoRe datamodel 2 files.
- *
- * @goal schema
- * 
- * @phase generate-resources
+ * @author Thomas Scheffler (yagee)
  */
+@Mojo(name = "schema", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class GenerateSchema extends AbstractDatamodelMojo {
     /**
      * Location of the file.
-     * @parameter expression="${project.build.outputDirectory}"
-     * @required
      */
+    @Parameter(required = true, defaultValue = "${project.build.outputDirectory}")
     private File schemaDirectory;
 
     public void execute() throws MojoExecutionException {
