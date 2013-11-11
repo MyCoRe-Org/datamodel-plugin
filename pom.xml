@@ -3,18 +3,18 @@
   <parent>
     <groupId>org.mycore</groupId>
     <artifactId>mycore-parent</artifactId>
-    <version>17</version>
+    <version>18-SNAPSHOT</version>
   </parent>
   <groupId>org.mycore.plugins</groupId>
   <artifactId>datamodel-plugin</artifactId>
-  <version>0.4</version>
+  <version>0.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>datamodel-plugin Maven Plugin</name>
 
   <scm>
-    <connection>scm:svn:http://server.mycore.de/svn/maven/datamodel-plugin/tags/datamodel-plugin-0.4</connection>
-    <developerConnection>scm:svn:https://server.mycore.de/svn/maven/datamodel-plugin/tags/datamodel-plugin-0.4</developerConnection>
-    <url>http://www.mycore.de/viewvc/viewvc.cgi/maven/datamodel-plugin/tags/datamodel-plugin-0.4</url>
+    <connection>scm:svn:http://server.mycore.de/svn/maven/datamodel-plugin/trunk</connection>
+    <developerConnection>scm:svn:https://server.mycore.de/svn/maven/datamodel-plugin/trunk</developerConnection>
+    <url>http://www.mycore.de/viewvc/viewvc.cgi/maven/datamodel-plugin/trunk</url>
   </scm>
   <distributionManagement>
     <site>
