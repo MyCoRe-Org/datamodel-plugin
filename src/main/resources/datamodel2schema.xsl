@@ -45,7 +45,17 @@
       <xs:complexType>
         <xs:all>
           <xsl:for-each select="/objecttype/metadata/element/@name">
-            <xs:element ref="{concat('def.',.)}">
+            <xs:element>
+              <xsl:attribute name="ref">
+                <xsl:choose>
+                  <xsl:when test="../@wrapper">
+                    <xsl:value-of select="../@wrapper" />
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="concat('def.',.)" />
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:attribute>
               <xsl:if test="../@minOccurs = 0">
                 <xsl:attribute name="minOccurs">
                 <xsl:value-of select="0" />
