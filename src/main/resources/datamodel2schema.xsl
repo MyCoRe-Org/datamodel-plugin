@@ -23,7 +23,7 @@
   </xsl:template>
 
   <xsl:template match="objecttype" mode="structure">
-    <xs:element name="structure" minOccurs="0">
+    <xs:element name="structure">
       <xs:complexType>
         <xs:sequence>
           <xsl:if test="@isChild = 'true'">
