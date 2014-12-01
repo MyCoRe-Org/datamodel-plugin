@@ -1,6 +1,7 @@
 package org.mycore.plugins.datamodel;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -29,9 +30,13 @@ public class GenerateSchema extends AbstractDatamodelMojo {
 
     public void execute() throws MojoExecutionException {
         prepareOutputDirectory(getSchemaDirectory());
+        Properties p = new Properties();
+        p.setProperty("plugin.groupId", getPlugin().getGroupId());
+        p.setProperty("plugin.artifactId", getPlugin().getArtifactId());
+        p.setProperty("plugin.version", getPlugin().getVersion());
         try {
             TransformMojo transformMojo = getTransformMojo(getTransformationSet("datamodel2schema.xsl",
-                getSchemaDirectory(), getDataModelDirectory(), new SchemaFileMapper(), null));
+                getSchemaDirectory(), getDataModelDirectory(), new SchemaFileMapper(), p));
             transformMojo.execute();
         } catch (Exception e) {
             if (e instanceof MojoExecutionException)

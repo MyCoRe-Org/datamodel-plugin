@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -36,6 +37,9 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
 
     @Parameter(readonly = true, required = true, defaultValue = "${project}")
     private MavenProject project;
+
+    @Parameter(readonly = true, required = true, defaultValue = "${plugin}")
+    private PluginDescriptor plugin;
 
     @Component
     private ResourceManager resourceManager;
@@ -78,6 +82,17 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
         return project;
     }
 
+    /**
+     * @return the plugin
+     * @throws MojoExecutionException 
+     */
+    protected final PluginDescriptor getPlugin() throws MojoExecutionException {
+        if (plugin == null) {
+            throw new MojoExecutionException("\"plugin\" is not defined.");
+        }
+        return plugin;
+    }
+
     protected ResourceManager getResourceManager() throws MojoExecutionException {
         if (resourceManager == null) {
             throw new MojoExecutionException("ResourceManager component was not injected.");
@@ -115,6 +130,13 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
      */
     protected final void setProject(MavenProject project) {
         this.project = project;
+    }
+
+    /**
+     * @param plugin the plugin to set
+     */
+    protected final void setPlugin(PluginDescriptor plugin) {
+        this.plugin = plugin;
     }
 
     /**
