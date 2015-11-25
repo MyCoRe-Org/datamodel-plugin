@@ -20,7 +20,7 @@ import org.codehaus.plexus.components.io.filemappers.FileMapper;
 
 /**
  * @author Thomas Scheffler (yagee)
- * 
+ * @deprecated  mycore-swf will be removed in future release
  */
 @Mojo(name = "swf-pages", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
 public class GenerateSWFPages extends AbstractDatamodelMojo {
@@ -86,6 +86,7 @@ public class GenerateSWFPages extends AbstractDatamodelMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (steps.length == 0)
             throw new MojoExecutionException("There are no workflow steps defined.");
+        getLog().warn("mycore-swf will be removed in future release!");
         prepareOutputDirectory(getWebDirectory());
         try {
             List<String> objectTypes = getObjectTypes();
