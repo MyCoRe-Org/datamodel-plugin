@@ -323,8 +323,8 @@
       <xs:sequence>
         <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="firstname" />
         <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="callname" />
-        <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="surname" />
         <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="fullname" />
+        <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="surname" />
         <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="academic" />
         <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="peerage" />
         <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="numeration" />
