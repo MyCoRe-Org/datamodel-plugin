@@ -339,6 +339,36 @@
     </xsl:apply-templates>
   </xsl:template>
 
+  <xsl:template match="element[@type='address']" mode="metadata">
+    <xsl:apply-templates select="." mode="enclosing">
+      <xsl:with-param name="class" select="'MCRMetaPersonName'" />
+    </xsl:apply-templates>
+    <xsl:variable name="innerSchema">
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="country" />
+        <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="state" />
+        <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="zipcode" />
+        <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="city" />
+        <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="street" />
+        <xs:element maxOccurs="1" minOccurs="0" type="xs:string" name="number" />
+      </xs:sequence>
+    </xsl:variable>
+    <xsl:apply-templates select="." mode="inner">
+      <xsl:with-param name="class" select="'MCRMetaPersonName'" />
+      <xsl:with-param name="complexType" select="xalan:nodeset($innerSchema)/*" />
+    </xsl:apply-templates>
+  </xsl:template>
+
+  <xsl:template match="element[@type='accessrule']" mode="metadata">
+    <xsl:apply-templates select="." mode="enclosing">
+      <xsl:with-param name="class" select="'MCRMetaAccessRule'" />
+    </xsl:apply-templates>
+    <xsl:apply-templates select="." mode="inner">
+      <xsl:with-param name="class" select="'MCRMetaAccessRule'" />
+      <xsl:with-param name="complexType" select="xs:*" />
+    </xsl:apply-templates>
+  </xsl:template>
+
   <xsl:template match="element" mode="types">
     <xsl:choose>
       <xsl:when test="type">
