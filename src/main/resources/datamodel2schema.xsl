@@ -103,7 +103,12 @@
       </xsl:attribute>
       <xs:complexType>
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" ref="">
+          <xs:element ref="">
+            <xsl:if test="not(@maxOccurs)">
+              <xsl:attribute name="maxOccurs">
+                <xsl:value-of select="'unbounded'" />
+              </xsl:attribute>
+            </xsl:if>
             <xsl:if test="@maxOccurs!=1">
               <xsl:attribute name="maxOccurs">
                 <xsl:value-of select="@maxOccurs" />
