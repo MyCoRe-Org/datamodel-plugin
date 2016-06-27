@@ -71,10 +71,6 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
         return dataModelDirectory;
     }
 
-    /**
-     * @return the project
-     * @throws MojoExecutionException 
-     */
     protected final MavenProject getProject() throws MojoExecutionException {
         if (project == null) {
             throw new MojoExecutionException("\"project\" is not defined.");
@@ -82,10 +78,6 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
         return project;
     }
 
-    /**
-     * @return the plugin
-     * @throws MojoExecutionException 
-     */
     protected final PluginDescriptor getPlugin() throws MojoExecutionException {
         if (plugin == null) {
             throw new MojoExecutionException("\"plugin\" is not defined.");
@@ -107,10 +99,6 @@ public abstract class AbstractDatamodelMojo extends AbstractMojo {
         return settings;
     }
 
-    /**
-     * @return the basedir
-     * @throws MojoExecutionException 
-     */
     protected final File getBasedir() throws MojoExecutionException {
         if (basedir == null) {
             throw new MojoExecutionException("\"basedir\" is not defined.");
