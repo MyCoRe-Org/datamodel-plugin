@@ -75,11 +75,20 @@
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:attribute>
-              <xsl:if test="../@minOccurs = 0">
-                <xsl:attribute name="minOccurs">
-                <xsl:value-of select="0" />
-              </xsl:attribute>
-              </xsl:if>
+              <xsl:choose>
+                <xsl:when test="../@required">
+                  <xsl:if test="not(../@required = 'true')">
+                    <xsl:attribute name="minOccurs">
+                      <xsl:value-of select="0" />
+                    </xsl:attribute>
+                  </xsl:if>
+                </xsl:when>
+                <xsl:when test="../@minOccurs = 0">
+                  <xsl:attribute name="minOccurs">
+                    <xsl:value-of select="0" />
+                  </xsl:attribute>
+                </xsl:when>
+              </xsl:choose>
             </xs:element>
           </xsl:for-each>
         </xs:all>
