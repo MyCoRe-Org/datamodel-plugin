@@ -188,4 +188,61 @@
       </build>
     </profile>
   </profiles>
+  <developers>
+    <developer>
+      <id>mcrtchef</id>
+      <name>Thomas Scheffler</name>
+      <email>thomas.scheffler (at) uni-jena.de</email>
+      <organization>Friedrich-Schiller-Universität Jena, Thüringer Universitäts- und Landesbibliothek</organization>
+      <organizationUrl>http://www.thulb.uni-jena.de/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>mcrsteph</id>
+      <name>Robert Stephan</name>
+      <email>robert.stephan (at) uni-rostock.de</email>
+      <organization>Universität Rostock, Universitätsbibliothek</organization>
+      <organizationUrl>http://www.ub.uni-rostock.de/ub/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>mcrshofm</id>
+      <name>Sebastian Hofmann</name>
+      <email>vo62xat (at) uni-jena.de</email>
+      <organization>Friedrich-Schiller-Universität Jena, Thüringer Universitäts- und Landesbibliothek</organization>
+      <organizationUrl>http://www.thulb.uni-jena.de/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>mcrkrebs</id>
+      <name>Kathleen Neumann</name>
+      <email>Kathleen.Neumann (at) gbv.de</email>
+      <organization>Verbundzentrale des GBV (VZG), Document Management System</organization>
+      <organizationUrl>http://www.gbv.de</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>mcrjkupf</id>
+      <name>Jens Kupferschmidt</name>
+      <email>kupferschmidt (at) rz.uni-leipzig.de</email>
+      <organization>Universität Leipzig, Universitätsrechenzentrum</organization>
+      <organizationUrl>http://www.urz.uni-leipzig.de/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
 </project>
