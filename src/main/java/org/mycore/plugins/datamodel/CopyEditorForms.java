@@ -5,7 +5,7 @@ package org.mycore.plugins.datamodel;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
+import java.util.Locale;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -18,6 +18,7 @@ import org.codehaus.plexus.util.FileUtils;
 /**
  * Copies editor definitions from ${editorDirectory} to ${targetEditorDirectory}
  * @author Thomas Scheffler (yagee)
+ * @deprecated removed in future release
  */
 @Mojo(name = "copy-editor", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
 public class CopyEditorForms extends AbstractDatamodelMojo {
@@ -44,7 +45,7 @@ public class CopyEditorForms extends AbstractDatamodelMojo {
         ds.setIncludes(new String[] { "**/*.xml" });
         ds.scan();
         String[] includedFiles = ds.getIncludedFiles();
-        getLog().info(MessageFormat.format("Copying {0} editor files.", includedFiles.length));
+        getLog().info(String.format(Locale.ENGLISH, "Copying {0} editor files.", includedFiles.length));
         for (String fileName : includedFiles) {
             File source = new File(getEditorDirectory(), fileName);
             if (!source.exists()) {
@@ -55,13 +56,14 @@ public class CopyEditorForms extends AbstractDatamodelMojo {
                 if (copyFileIfNeeded(source, target)) {
                     if (getLog().isDebugEnabled())
                         getLog().debug(
-                            MessageFormat.format("Copying {0} to {1}", source.getName(), target.getAbsolutePath()));
+                            String.format(Locale.ENGLISH, "Copying {0} to {1}", source.getName(),
+                                target.getAbsolutePath()));
                 } else {
                     if (getLog().isDebugEnabled())
-                        getLog().debug(MessageFormat.format("Skipped copying {0}", source.getName()));
+                        getLog().debug(String.format(Locale.ENGLISH, "Skipped copying {0}", source.getName()));
                 }
             } catch (IOException e) {
-                throw new MojoExecutionException(MessageFormat.format("Could not copy {0} to {1}!",
+                throw new MojoExecutionException(String.format(Locale.ENGLISH, "Could not copy {0} to {1}!",
                     source.getAbsolutePath(), target.getAbsolutePath()), e);
             }
         }
@@ -70,7 +72,7 @@ public class CopyEditorForms extends AbstractDatamodelMojo {
     private boolean copyFileIfNeeded(File source, File target) throws IOException {
         if (getLog().isDebugEnabled()) {
             getLog().debug(
-                MessageFormat.format("Source timestamp: {0} target timestamp: {1}", source.lastModified(),
+                String.format(Locale.ENGLISH, "Source timestamp: {0} target timestamp: {1}", source.lastModified(),
                     target.lastModified()));
         }
         if (target.lastModified() < source.lastModified() || target.length() != source.length()) {

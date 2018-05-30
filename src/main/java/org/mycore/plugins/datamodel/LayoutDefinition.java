@@ -1,5 +1,6 @@
 package org.mycore.plugins.datamodel;
 
+@Deprecated
 public class LayoutDefinition {
 
     private String objectType;

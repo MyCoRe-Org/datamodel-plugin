@@ -8,6 +8,7 @@ import java.io.FileFilter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -107,7 +108,7 @@ public class GenerateSWFPages extends AbstractDatamodelMojo {
                         if (layParam != null) {
                             parameters.put("layout", layParam);
                         }
-                        String msg = MessageFormat.format("objectType: {0}, step: {1}, layout: {2}", objectType, step,
+                        String msg = String.format(Locale.ENGLISH, "objectType: {0}, step: {1}, layout: {2}", objectType, step,
                             layParam);
                         getLog().info(msg);
                         TransformMojo transformMojo = getTransformMojo(getTransformationSet("swf-page.xsl",
