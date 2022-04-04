@@ -14,7 +14,7 @@
       <xsl:call-template name="schemaAnnotation" />
       <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="http://www.w3.org/XML/2008/06/xlink.xsd" />
       <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
-      <xs:include schemaLocation="mycore-common-datamodel.xsd" />
+      <xs:include schemaLocation="mycore-common-datamodel2.xsd" />
       <xsl:apply-templates select="objecttype/xsd" />
       <xsl:apply-templates mode="structure" />
       <xsl:apply-templates mode="metadata" />
