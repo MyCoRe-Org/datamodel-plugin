@@ -8,7 +8,7 @@
   </parent>
   <groupId>org.mycore.plugins</groupId>
   <artifactId>datamodel-plugin</artifactId>
-  <version>8.1-SNAPSHOT</version>
+  <version>0.8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>datamodel-plugin Maven Plugin</name>
 
