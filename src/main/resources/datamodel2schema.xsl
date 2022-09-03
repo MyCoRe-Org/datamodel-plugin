@@ -105,7 +105,6 @@
 
   <xsl:template match="element" mode="enclosing">
     <xsl:param name="class" />
-    <xs:element>
       <xsl:variable name="name">
         <xsl:choose>
           <xsl:when test="@wrapper">
@@ -133,11 +132,11 @@
                 <xsl:value-of select="@minOccurs" />
               </xsl:attribute>
             </xsl:if>
-            <xsl:attribute name="type">
-              <xsl:value-of select="concat(@name,'Type')" />
-            </xsl:attribute>
             <xsl:attribute name="name">
               <xsl:value-of select="@name" />
+            </xsl:attribute>
+            <xsl:attribute name="type">
+              <xsl:value-of select="concat(@name,'Type')" />
             </xsl:attribute>
           </xs:element>
         </xs:sequence>
