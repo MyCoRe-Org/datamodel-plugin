@@ -14,7 +14,7 @@
       <xsl:call-template name="schemaAnnotation" />
       <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="http://www.w3.org/XML/2008/06/xlink.xsd" />
       <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
-      <xs:include schemaLocation="mcrcommon-datamodel.xsd" />
+      <xs:include schemaLocation="mycore-common-datamodel2.xsd" />
       <xsl:apply-templates select="objecttype/xsd" />
       <xsl:apply-templates mode="structure" />
       <xsl:apply-templates mode="metadata" />
@@ -42,36 +42,43 @@
   </xsl:template>
 
   <xsl:template match="objecttype" mode="structure">
-    <xs:element name="structure">
-      <xs:complexType>
+      <xs:complexType name="structType">
         <xs:sequence>
           <xsl:if test="@isChild = 'true'">
-            <xs:element ref="parents" minOccurs="0" />
+            <xs:element name="parents" type="parentsType" minOccurs="0" />
           </xsl:if>
           <xsl:if test="@isParent = 'true'">
-            <xs:element ref="children" minOccurs="0" />
+            <xs:element name="children" type="childrenType" minOccurs="0" />
           </xsl:if>
           <xsl:if test="@hasDerivates = 'true'">
-            <xs:element ref="derobjects" minOccurs="0" />
+            <xs:element name="derobjects" type="derobjectsType" minOccurs="0" />
           </xsl:if>
         </xs:sequence>
       </xs:complexType>
-    </xs:element>
   </xsl:template>
 
   <xsl:template match="objecttype" mode="metadata">
-    <xs:element name="metadata">
-      <xs:complexType>
+      <xs:complexType name="metadataType">
         <xs:all>
           <xsl:for-each select="/objecttype/metadata/element/@name">
             <xs:element>
-              <xsl:attribute name="ref">
+              <xsl:attribute name="name">
                 <xsl:choose>
                   <xsl:when test="../@wrapper">
                     <xsl:value-of select="../@wrapper" />
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:value-of select="concat('def.',.)" />
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:attribute>
+              <xsl:attribute name="type">
+                <xsl:choose>
+                  <xsl:when test="../@wrapper">
+                    <xsl:value-of select="concat(../@wrapper,'Type')" />
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="concat('def.',.,'Type')" />
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:attribute>
@@ -94,13 +101,12 @@
         </xs:all>
         <xs:attribute ref="xml:lang" use="optional" />
       </xs:complexType>
-    </xs:element>
   </xsl:template>
 
   <xsl:template match="element" mode="enclosing">
     <xsl:param name="class" />
     <xs:element>
-      <xsl:attribute name="name">
+      <xsl:variable name="name">
         <xsl:choose>
           <xsl:when test="@wrapper">
             <xsl:value-of select="@wrapper" />
@@ -109,8 +115,12 @@
             <xsl:value-of select="concat('def.',@name)" />
           </xsl:otherwise>
         </xsl:choose>
-      </xsl:attribute>
+      </xsl:variable>
+
       <xs:complexType>
+        <xsl:attribute name="name">
+          <xsl:value-of select="concat($name,'Type')" />
+        </xsl:attribute>
         <xs:sequence>
           <xs:element>
             <xsl:if test="@maxOccurs!=1">
@@ -123,7 +133,10 @@
                 <xsl:value-of select="@minOccurs" />
               </xsl:attribute>
             </xsl:if>
-            <xsl:attribute name="ref">
+            <xsl:attribute name="type">
+              <xsl:value-of select="concat(@name,'Type')" />
+            </xsl:attribute>
+            <xsl:attribute name="name">
               <xsl:value-of select="@name" />
             </xsl:attribute>
           </xs:element>
@@ -161,18 +174,17 @@
           <xs:attributeGroup ref="noInheritance" />
         </xsl:if>
       </xs:complexType>
-    </xs:element>
   </xsl:template>
+
   <xsl:template match="element" mode="inner">
     <xsl:param name="class" />
     <xsl:param name="containsText" select="false()" />
     <xsl:param name="complexType" select="''" />
     <xsl:param name="textFormat" select="'xs:string'" />
-    <xs:element>
-      <xsl:attribute name="name">
-        <xsl:value-of select="@name" />
-      </xsl:attribute>
       <xs:complexType>
+        <xsl:attribute name="name">
+          <xsl:value-of select="concat(@name, 'Type')" />
+        </xsl:attribute>        
         <xsl:choose>
           <xsl:when test="$containsText">
             <xs:simpleContent>
@@ -193,7 +205,6 @@
           </xsl:otherwise>
         </xsl:choose>
       </xs:complexType>
-    </xs:element>
   </xsl:template>
 
   <xsl:template match="element[@type='text']" mode="metadata">
