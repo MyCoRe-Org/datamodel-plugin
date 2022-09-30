@@ -186,6 +186,7 @@
                 <xs:attributeGroup ref="{$class}" />
                 <xs:attributeGroup ref="notInherited" />
                 <xsl:apply-templates select="." mode="types" />
+                <xsl:apply-templates select="." mode="sequences" />
               </xs:extension>
             </xs:simpleContent>
           </xsl:when>
@@ -194,6 +195,7 @@
             <xs:attributeGroup ref="{$class}" />
             <xs:attributeGroup ref="notInherited" />
             <xsl:apply-templates select="." mode="types" />
+            <xsl:apply-templates select="." mode="sequences" />
           </xsl:otherwise>
         </xsl:choose>
       </xs:complexType>
@@ -411,6 +413,10 @@
         <xs:attribute name="type" type="xs:string" />
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="element" mode="sequences">
+    <xs:attribute name="sequence" type="xs:string" />
   </xsl:template>
 
 </xsl:stylesheet>
