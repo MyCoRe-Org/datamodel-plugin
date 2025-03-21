@@ -50,6 +50,7 @@
           </xsl:if>
           <xsl:if test="@isParent = 'true'">
             <xs:element ref="children" minOccurs="0" />
+            <xs:element ref="childrenOrder" minOccurs="0" />
           </xsl:if>
           <xsl:if test="@hasDerivates = 'true'">
             <xs:element ref="derobjects" minOccurs="0" />
